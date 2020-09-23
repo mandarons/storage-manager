@@ -7,7 +7,6 @@ from db.meta_db import MetaDB
 from db.stats_db import StatsDB
 from operations import folder_operations
 
-
 class Config(object):
     def __init__(self):
         self.stats_db = StatsDB()

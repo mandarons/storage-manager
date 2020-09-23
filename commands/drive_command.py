@@ -95,7 +95,7 @@ def _refresh_drive(config, name):
     items, drive_size, num_of_files = config.folder_operations.folder_stats(config=config, folder_path=drive_path)
     usage = storage_operations.calculate_storage_usage(config=config, path=drive_path)
     result = config.stats_db.upsert(folder_path=drive_path, stats={
-        'total': drive_size,
+        'total': usage[drive_path]['total'],
         'free': usage[drive_path]['free'],
         'used': usage[drive_path]['used'],
         'number_of_files': num_of_files,
@@ -104,7 +104,7 @@ def _refresh_drive(config, name):
         'items': items,
 
     })
-    return result, drive_size, num_of_files
+    return result, usage[drive_path]['total'], num_of_files
 
 
 @drive.command(short_help='Refreshes the drive <name> statistics')

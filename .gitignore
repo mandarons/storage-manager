@@ -1,1 +1,6 @@
 /venv/
+/build/lib/
+/dist/
+/storage.egg-info/
+/storage_manager.egg-info/
+/storage_manager_mandarons.egg-info/
