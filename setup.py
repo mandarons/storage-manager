@@ -34,7 +34,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='storage-manager',
-    version='0.0.5',
+    version='0.1.0',
     author='Mandar Patil',
     author_email='mandarons@pm.me',
     description='Storage - a load-balanced storage manager',
