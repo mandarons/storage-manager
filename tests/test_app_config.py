@@ -28,16 +28,16 @@
 #
 
 import unittest
+import os
 
 from config import app_config
-
 
 class TestAppConfigSuccess(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
         super(TestAppConfigSuccess, self).__init__(*args, **kwargs)
         self.env_dict = {}
-        with open('../config/.env', 'r') as f:
+        with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', '.env'), 'r') as f:
             lines = f.readlines()
             for line in lines:
                 tokens = line.split('=')
