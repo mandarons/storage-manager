@@ -1,0 +1,16 @@
+[run]
+branch = True
+source =
+    commands/
+    config/
+    db/
+    operations/
+
+[report]
+exclude_lines =
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+
+[html]
+directory = htmlcov
