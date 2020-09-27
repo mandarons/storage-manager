@@ -9,4 +9,4 @@ script:
   - flake8 --config=flake8-config.ini
   - pytest
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
