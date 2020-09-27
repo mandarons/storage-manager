@@ -81,11 +81,11 @@ def remove(config, name):
     '''
     config.debug(f'Removing {name} ...')
     drive_path = config.meta_db.get_drive_path(name=name)
-    if drive_path == None:
-        config.warning(f'Path for drive does not exist. Stats will not be removed.')
+    if drive_path is None:
+        config.warning('Path for drive does not exist. Stats will not be removed.')
     result = config.stats_db.remove(folder_path=drive_path)
     if len(result) == 0:
-        config.warning(f'Stats were not available.')
+        config.warning('Stats were not available.')
     result = config.meta_db.remove_drive(name=name)
     if len(result) == 0:
         config.error(f'Nothing to remove. Drive {name} does not exist.')
@@ -99,7 +99,7 @@ def list(config):
     '''
     Shows current list of drives in the storage.
     '''
-    config.debug(f'Retrieving the list of drives ...')
+    config.debug('Retrieving the list of drives ...')
 
     result = config.meta_db.get_drives()
     if len(result) > 0:
@@ -109,14 +109,14 @@ def list(config):
     else:
         config.error('No drives found.')
         sys.exit(1)
-    config.debug(f'Listing of drives completed.')
+    config.debug('Listing of drives completed.')
 
     return result
 
 
 def _refresh_drive(config, name):
     drive_path = config.meta_db.get_drive_path(name=name)
-    if drive_path == None:
+    if drive_path is None:
         config.error(f'Drive with name: {name} does not exist.')
         sys.exit(1)
     items, drive_size, num_of_files = config.folder_operations.folder_stats(config=config, folder_path=drive_path)

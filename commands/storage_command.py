@@ -54,7 +54,7 @@ def info(config):
     config.debug('Getting information about your storage ...')
     all_drives_stat = config.stats_db.get_all()
     if len(all_drives_stat) == 0:
-        config.error(f'No drives found.')
+        config.error('No drives found.')
         sys.exit(1)
     total_storage = 0
     used_storage = 0
@@ -105,7 +105,7 @@ def insert(config, storage_path, source_path):
     config.debug(message=f'Copying the file {source_path} to {destination_path}')
     result = folder_operations.cpsync(config=config, source=source_path, destination=destination_path, dry_run=False)
     if result:
-        config.info(message=f'Copied. Please delete the local copy.')
+        config.info(message='Copied. Please delete the local copy.')
     config.debug(f'File {source_path} copied to {destination_path}.')
 
 
