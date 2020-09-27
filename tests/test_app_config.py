@@ -32,6 +32,7 @@ import os
 
 from config import app_config
 
+
 class TestAppConfigSuccess(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):

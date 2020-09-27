@@ -48,7 +48,7 @@ class TestDriveCommand(unittest.TestCase):
     def cleanup(self):
         DB.drop_tables()
         for path in self.expected_drive_paths:
-            if False == utils.delete_folder(path=path):
+            if utils.delete_folder(path=path) is False:
                 utils.create_folder(path=path)
 
     def setUp(self) -> None:

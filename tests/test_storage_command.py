@@ -50,9 +50,9 @@ class TestStorageCommand(unittest.TestCase):
     def cleanup(self):
         DB.drop_tables()
         for path in self.expected_drive_paths:
-            if False == utils.delete_folder(path=path):
+            if utils.delete_folder(path=path) is False:
                 utils.create_folder(path=path)
-        if False == utils.delete_temp_file():
+        if utils.delete_temp_file() is False:
             utils.create_temp_file()
 
     def setUp(self) -> None:

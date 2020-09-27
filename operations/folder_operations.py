@@ -42,8 +42,7 @@ def calculate_hash(file_path, hash_name):
 
     hash_name = hash_name.lower()
     if not hasattr(hashlib, hash_name):
-        raise Exception('Hash algorithm not available : {}' \
-                        .format(hash_name))
+        raise Exception('Hash algorithm not available : {}' .format(hash_name))
 
     with open(file_path, 'rb') as f:
         checksum = getattr(hashlib, hash_name)()
@@ -161,8 +160,8 @@ def cpsync(config, source, destination, dry_run=False):
     config.info(f'Source: {source}\nDestination: {destination}')
     with subprocess.Popen(args=cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                           encoding='utf-8') as proc:
-        progress_bar = tqdm(total=100, desc='Copying', bar_format=f'{{desc}}|{{bar}}|{{postfix}}')
-        while proc.poll() == None:
+        progress_bar = tqdm(total=100, desc='Copying', bar_format='{{desc}}|{{bar}}|{{postfix}}')
+        while proc.poll() is None:
             output = proc.stdout.readline()
             m = re.findall(r'(\d+)\s+(\d+)%\s+([0-9]*.[0-9]+\w*/s)\s+', output)
             if len(m) == 1 and len(m[0]) == 3:

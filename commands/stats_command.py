@@ -49,10 +49,10 @@ def show_all(config):
     Summary of storage.
     '''
     if config.verbose:
-        config.debug(f'Showing summary of storage ...')
+        config.debug('Showing summary of storage ...')
     result = config.stats_db.get_all()
     if len(result) == 0:
-        config.error(f'No stats exist.')
+        config.error('No stats exist.')
         sys.exit(1)
     data = [list(r['stats'].values())[:-1] for r in result]
     for entry in data:
@@ -64,5 +64,5 @@ def show_all(config):
     headers.remove('items')
     config.info(tabulate(tabular_data=data, headers=headers))
     if config.verbose:
-        config.debug(f'Completed.')
+        config.debug('Completed.')
     return result
