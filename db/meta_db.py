@@ -57,7 +57,8 @@ class MetaDB(object):
         self.config_table.upsert({'key': key, 'value': value}, Query().key == key)
 
     def get_config(self, key):
-        return self.config_table.get(Query().key == key)
+        data = self.config_table.get(Query().key == key)
+        return data if data is not None else {}
 
     def get_all_config(self):
         return self.config_table.all()
