@@ -68,12 +68,19 @@ class TestStorageCommand(unittest.TestCase):
         self.assertEqual(actual.exit_code, 0)
         self.assertIn('Usage', actual.output)
 
-    def test_storage_info(self):
+    def test_storage_info_error(self):
         actual = self.runner.invoke(storage_command.info)
         self.assertNotEqual(actual.exit_code, 0)
         self.assertNotIn('Usage', actual.output)
 
-    def test_storage_refresh(self):
+    def test_storage_info_valid(self):
+        for drive_name, drive_path in zip(self.expected_drive_names, self.expected_drive_paths):
+            actual = self.runner.invoke(drive_command.add, [drive_name, drive_path])
+            self.assertEqual(actual.exit_code, 0)
+        actual = self.runner.invoke(storage_command.info)
+        self.assertEqual(actual.exit_code, 0)
+
+    def test_storage_refresh_error(self):
         actual = self.runner.invoke(storage_command.refresh)
         self.assertEqual(actual.exit_code, 0)
         self.assertNotIn('Usage', actual.output)
@@ -92,6 +99,8 @@ class TestStorageCommand(unittest.TestCase):
         for drive_name, drive_path in zip(self.expected_drive_names, self.expected_drive_paths):
             actual = self.runner.invoke(drive_command.add, [drive_name, drive_path])
             self.assertEqual(actual.exit_code, 0)
+        actual = self.runner.invoke(config_command.set, ['strategy', 'balanced'])
+        self.assertEqual(actual.exit_code, 0)
         self.assertFalse(os.path.exists(
             os.path.join(self.expected_drive_paths[0], 'movies', os.path.basename(self.temp_file_path))) or
                          os.path.exists(os.path.join(self.expected_drive_paths[1], 'movies',

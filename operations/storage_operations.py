@@ -44,6 +44,7 @@ def calculate_storage_usage(config, path):
 
 def determine_destination_drive(config, space_required):
     algorithm = config.meta_db.get_config(key='strategy')
+    algorithm = algorithm['value'] if 'value' in algorithm else ''
     drives = config.meta_db.get_drives()
     eligible_drives = []
     for drive in drives:
@@ -52,7 +53,8 @@ def determine_destination_drive(config, space_required):
         if space_required < usage['free']:
             eligible_drives.append({'name': drive['name'], 'free': usage['free'], 'path': drive['path']})
     if algorithm == 'balanced':
-        destination_drive = max([e['free'] for e in eligible_drives])
+        max_free = max([e['free'] for e in eligible_drives])
+        destination_drive = next((x for x in eligible_drives if x['free'] == max_free))
     else:
         destination_drive = random.choice(eligible_drives)
     return destination_drive
