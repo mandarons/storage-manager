@@ -36,12 +36,16 @@ from humanfriendly import format_size
 from tqdm import tqdm
 
 
+def generate_hash_file_path(file_path, hash_name):
+    return os.path.join(os.path.dirname(file_path), f'.{os.path.basename(os.path.splitext(file_path)[0])}.{hash_name}')
+
+
 def calculate_hash(file_path, hash_name, buffer_size=4096, force=True):
     """Calculate the hash of a file. The available hashes are given by the hashlib module.
     The available hashes can be listed with hashlib.algorithms_available."""
 
     hash_name = hash_name.lower()
-    hash_filename = os.path.splitext(file_path)[0] + '.' + hash_name
+    hash_filename = generate_hash_file_path(file_path=file_path, hash_name=hash_name)
     if not hasattr(hashlib, hash_name):
         raise Exception('Hash algorithm not available : {}' .format(hash_name))
     if os.path.exists(hash_filename) and not force:
