@@ -48,6 +48,7 @@ class TestE2E(unittest.TestCase):
         for path in self.expected_drive_paths:
             if utils.delete_folder(path=path) is False:
                 utils.create_folder(path=path)
+        utils.delete_file_with_extensions()
 
     def setUp(self) -> None:
         self.cleanup()

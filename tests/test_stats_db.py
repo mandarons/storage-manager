@@ -32,6 +32,7 @@ import unittest
 
 from tinydb import Query
 
+import tests as utils
 from commands import Config
 from db.stats_db import StatsDB, DB
 from operations import folder_operations
@@ -52,14 +53,17 @@ class TestStatsDBSuccess(unittest.TestCase):
             'items': items
         }
 
-    def setUp(self) -> None:
+    def cleanup(self):
         DB.drop_tables()
+        utils.delete_file_with_extensions()
+
+    def setUp(self) -> None:
+        self.cleanup()
         self.stats_db = StatsDB()
         self.table = DB.table('stats', cache_size=0)
 
     def tearDown(self) -> None:
-        # pass
-        DB.drop_tables()
+        self.cleanup()
 
     def test_init_config(self):
         self.assertIsNotNone(self.stats_db.stats_table)

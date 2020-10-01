@@ -43,12 +43,16 @@ class TestStatsCommand(unittest.TestCase):
         self.expected_stats_names = utils.drive_names
         self.expected_stats_paths = utils.drive_paths
 
-    def setUp(self) -> None:
+    def cleanup(self):
         DB.drop_tables()
+        utils.delete_file_with_extensions()
+
+    def setUp(self) -> None:
+        self.cleanup()
         self.runner = CliRunner()
 
     def tearDown(self) -> None:
-        DB.drop_tables()
+        self.cleanup()
 
     def test_show_all_empty_stats(self):
         actual = self.runner.invoke(stats_command.show_all)

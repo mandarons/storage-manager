@@ -32,6 +32,7 @@ import unittest
 from click.testing import CliRunner
 from tinydb import Query
 
+import tests as utils
 from commands import config_command
 from db.meta_db import DB
 
@@ -44,12 +45,16 @@ class TestConfigCommand(unittest.TestCase):
         self.expected_strategies = ['balanced', 'random']
         self.config_table = DB.table('config', cache_size=0)
 
-    def setUp(self) -> None:
+    def cleanup(self):
         DB.drop_tables()
+        utils.delete_file_with_extensions()
+
+    def setUp(self) -> None:
+        self.cleanup()
         self.runner = CliRunner()
 
     def tearDown(self) -> None:
-        DB.drop_tables()
+        self.cleanup()
 
     def test_set_config(self):
         actual = self.runner.invoke(config_command.set, [self.strategy_key, self.expected_strategies[0]])

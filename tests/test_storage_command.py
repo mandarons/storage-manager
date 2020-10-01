@@ -54,6 +54,7 @@ class TestStorageCommand(unittest.TestCase):
                 utils.create_folder(path=path)
         if utils.delete_temp_file() is False:
             utils.create_temp_file()
+        utils.delete_file_with_extensions()
 
     def setUp(self) -> None:
         self.cleanup()
