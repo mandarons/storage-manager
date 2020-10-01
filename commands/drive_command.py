@@ -112,12 +112,13 @@ def list(config):
     return result
 
 
-def _refresh_drive(config, name):
+def _refresh_drive(config, name, force_hash=False):
     drive_path = config.meta_db.get_drive_path(name=name)
     if drive_path is None:
         config.error(f'Drive with name: {name} does not exist.')
         sys.exit(1)
-    items, drive_size, num_of_files = config.folder_operations.folder_stats(config=config, folder_path=drive_path)
+    items, drive_size, num_of_files = config.folder_operations.folder_stats(config=config, folder_path=drive_path,
+                                                                            hash_force=force_hash)
     usage = storage_operations.calculate_storage_usage(config=config, path=drive_path)
     result = config.stats_db.upsert(folder_path=drive_path, stats={
         'total': usage[drive_path]['total'],
@@ -133,16 +134,17 @@ def _refresh_drive(config, name):
 
 
 @drive.command(short_help='Refreshes the drive <name> statistics')
+@click.option('--force-hash', is_flag=True)
 @click.argument('name', type=str, metavar='<name>')
 @pass_config
-def refresh(config, name):
+def refresh(config, name, force_hash):
     '''
     Refreshes the folder statistics for the drive <name>
 
     name: name of the drive
     '''
     config.debug(f'Refreshing the drive {name} ...')
-    result, drive_size, num_of_files = _refresh_drive(config=config, name=name)
+    result, drive_size, num_of_files = _refresh_drive(config=config, name=name, force_hash=force_hash)
     config.info(tabulate([[humanfriendly.format_size(drive_size), humanfriendly.format_number(num_of_files)]],
                          ['Drive Size', 'Number of Files']))
     if len(result) == 0:
