@@ -95,7 +95,8 @@ def refresh(config, force):
 @click.argument('source_path', type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True),
                 metavar='<source_path>')
 @pass_config
-def insert(config, storage_path, source_path):
+@click.pass_context
+def insert(context, config, storage_path, source_path):
     '''
     Insert a new file or folder into the storage
 
@@ -115,6 +116,7 @@ def insert(config, storage_path, source_path):
     result = folder_operations.cpsync(config=config, source=source_path, destination=destination_path, dry_run=False)
     if result:
         config.info(message='Copied. Please delete the local copy.')
+        context.invoke(refresh, force=False)
     config.debug(f'File {source_path} copied to {destination_path}.')
 
 
