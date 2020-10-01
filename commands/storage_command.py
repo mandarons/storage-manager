@@ -73,12 +73,21 @@ def info(config):
 
 
 @storage.command(short_help='Refresh metadata of the storage.')
+@click.option('--force', is_flag=True)
 @pass_config
-def refresh(config):
+def refresh(config, force):
     '''
     Refreshes the metadata of your storage. Depending on number of files, this operation may take a while.
     '''
     config.debug('Refreshing the storage metadata ...')
+    list_of_drives = config.meta_db.get_drives()
+    if len(list_of_drives) == 0:
+        config.error('No drives found. Nothing to refresh.')
+        sys.exit(1)
+    drive_names = [d['name'] for d in list_of_drives]
+    for drive_name in drive_names:
+        config.info(f'Refreshing drive: {drive_name} ...')
+        drive_command._refresh_drive(config=config, name=drive_name, force_hash=force)
 
 
 @storage.command(short_help='Insert a new file or folder into the storage.')
