@@ -41,7 +41,7 @@ def calculate_hash(file_path, hash_name, buffer_size=4096, force=True):
     The available hashes can be listed with hashlib.algorithms_available."""
 
     hash_name = hash_name.lower()
-    hash_filename = os.path.splitext(file_path)[0] + hash_name
+    hash_filename = os.path.splitext(file_path)[0] + '.' + hash_name
     if not hasattr(hashlib, hash_name):
         raise Exception('Hash algorithm not available : {}' .format(hash_name))
     if os.path.exists(hash_filename) and not force:
@@ -58,7 +58,7 @@ def calculate_hash(file_path, hash_name, buffer_size=4096, force=True):
             progress_bar.update(percent - progress_bar.n)
         progress_bar.close()
         hexdigest = checksum.hexdigest()
-    with open(os.path.splitext(file_path)[0] + hash_name, 'w') as f:
+    with open(hash_filename, 'w') as f:
         f.write(hexdigest)
     return hexdigest
 

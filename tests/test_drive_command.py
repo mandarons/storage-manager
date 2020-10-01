@@ -131,12 +131,42 @@ class TestDriveCommand(unittest.TestCase):
     def test_refresh_drive_with_forced_hash_calculation(self):
         actual = self.runner.invoke(drive_command.add, [self.expected_drive_names[0], self.expected_drive_paths[0]])
         self.assertEqual(actual.exit_code, 0)
-        utils.create_file(path=os.path.join(self.expected_drive_paths[0], 'temp.bin'))
+        temp_file_path = os.path.join(self.expected_drive_paths[0], 'temp.bin')
+        utils.create_file(path=temp_file_path)
+        hash_file = os.path.splitext(temp_file_path)[0] + '.md5'
+        if os.path.exists(hash_file):
+            os.remove(hash_file)
         actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
         self.assertEqual(actual.exit_code, 0)
+        self.assertTrue(os.path.exists(hash_file))
+        old_hash_file_stats = os.stat(hash_file)
         actual = self.runner.invoke(drive_command.refresh, ['--force-hash', self.expected_drive_names[0]])
         self.assertEqual(actual.exit_code, 0)
         self.assertIn('Drive Size', actual.output)
+        self.assertTrue(os.path.exists(hash_file))
+        hash_file_stats = os.stat(hash_file)
+        self.assertTrue(old_hash_file_stats.st_mtime < hash_file_stats.st_mtime)
+        actual = self.runner.invoke(stats_command.show_all, [])
+        self.assertEqual(actual.exit_code, 0)
+
+    def test_refresh_drive_skip_hashing_if_md5_exists(self):
+        actual = self.runner.invoke(drive_command.add, [self.expected_drive_names[0], self.expected_drive_paths[0]])
+        self.assertEqual(actual.exit_code, 0)
+        temp_file_path = os.path.join(self.expected_drive_paths[0], 'temp.bin')
+        utils.create_file(path=temp_file_path)
+        hash_file = os.path.splitext(temp_file_path)[0] + '.md5'
+        if os.path.exists(hash_file):
+            os.remove(hash_file)
+        actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
+        self.assertEqual(actual.exit_code, 0)
+        self.assertTrue(os.path.exists(hash_file))
+        old_hash_file_stats = os.stat(hash_file)
+        actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
+        self.assertEqual(actual.exit_code, 0)
+        self.assertIn('Drive Size', actual.output)
+        self.assertTrue(os.path.exists(hash_file))
+        hash_file_stats = os.stat(hash_file)
+        self.assertEqual(old_hash_file_stats.st_mtime, hash_file_stats.st_mtime)
         actual = self.runner.invoke(stats_command.show_all, [])
         self.assertEqual(actual.exit_code, 0)
 
