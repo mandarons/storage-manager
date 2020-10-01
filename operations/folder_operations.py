@@ -36,7 +36,7 @@ from humanfriendly import format_size
 from tqdm import tqdm
 
 
-def calculate_hash(file_path, hash_name):
+def calculate_hash(file_path, hash_name, buffer_size=4096):
     """Calculate the hash of a file. The available hashes are given by the hashlib module.
     The available hashes can be listed with hashlib.algorithms_available."""
 
@@ -46,13 +46,19 @@ def calculate_hash(file_path, hash_name):
 
     with open(file_path, 'rb') as f:
         checksum = getattr(hashlib, hash_name)()
-        for chunk in iter(lambda: f.read(4096), b''):
+        total_size = os.path.getsize(filename=file_path)
+        total_chunks = int(total_size / buffer_size)
+        progress_bar = tqdm(total=100, desc='Hashing', bar_format='{desc}|{bar}|{postfix}')
+        progress_bar.set_postfix_str(f'{os.path.basename(file_path)}')
+        for chunk, index in zip(iter(lambda: f.read(buffer_size), b''), range(total_chunks)):
             checksum.update(chunk)
-
+            percent = 100 * (index + 1) / total_chunks
+            progress_bar.update(percent - progress_bar.n)
+        progress_bar.close()
         return checksum.hexdigest()
 
 
-def _recursive_folder_stats(config, folder_path, parent_path, hash_name=None,
+def _recursive_folder_stats(config, folder_path, parent_path, hash_name,
                             ignore_hidden=False, depth=0, idx=1, parent_idx=0):
     items = {}
     folder_size, num_files = 0, 0
@@ -93,11 +99,9 @@ def _recursive_folder_stats(config, folder_path, parent_path, hash_name=None,
                     'depth': depth,
                     'parent_index': current_idx,
                     'parent_path': folder_path,
-                    'uid': stats.st_uid
+                    'uid': stats.st_uid,
+                    'hash': calculate_hash(file_path=file_path, hash_name=hash_name)
                 }
-                # if hash_name:
-                #     item.append(calculate_hash(file_path, hash_name))
-                # items.append(item)
                 items[file_path] = item
                 num_files += 1
 
@@ -123,7 +127,7 @@ def _recursive_folder_stats(config, folder_path, parent_path, hash_name=None,
     return idx, items, folder_size, num_files
 
 
-def folder_stats(config, folder_path, hash_name=None, ignore_hidden=False):
+def folder_stats(config, folder_path, hash_name='md5', ignore_hidden=False):
     idx, items, folder_size, num_files = _recursive_folder_stats(
         config,
         folder_path,

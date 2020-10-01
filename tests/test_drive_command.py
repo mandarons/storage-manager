@@ -27,7 +27,7 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-import unittest
+import unittest, os
 
 from click.testing import CliRunner
 
@@ -114,6 +114,7 @@ class TestDriveCommand(unittest.TestCase):
     def test_refresh_drive(self):
         actual = self.runner.invoke(drive_command.add, [self.expected_drive_names[0], self.expected_drive_paths[0]])
         self.assertEqual(actual.exit_code, 0)
+        utils.create_file(path=os.path.join(self.expected_drive_paths[0], 'temp.bin'), size=1073741824*6)
         actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
         self.assertEqual(actual.exit_code, 0)
         self.assertIn('Drive Size', actual.output)
