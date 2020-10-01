@@ -128,5 +128,17 @@ class TestDriveCommand(unittest.TestCase):
         self.assertNotEqual(actual.exit_code, 0)
         self.assertIn('does not exist', actual.output)
 
+    def test_refresh_drive_with_forced_hash_calculation(self):
+        actual = self.runner.invoke(drive_command.add, [self.expected_drive_names[0], self.expected_drive_paths[0]])
+        self.assertEqual(actual.exit_code, 0)
+        utils.create_file(path=os.path.join(self.expected_drive_paths[0], 'temp.bin'))
+        actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
+        self.assertEqual(actual.exit_code, 0)
+        actual = self.runner.invoke(drive_command.refresh, ['--force-hash', self.expected_drive_names[0]])
+        self.assertEqual(actual.exit_code, 0)
+        self.assertIn('Drive Size', actual.output)
+        actual = self.runner.invoke(stats_command.show_all, [])
+        self.assertEqual(actual.exit_code, 0)
+
     def test_refresh_existing_drive_with_invalid_path(self):
         pass
