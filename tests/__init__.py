@@ -33,6 +33,7 @@ import shutil
 temp_file_path = os.path.join(os.path.dirname(__file__), 'temp_file_1GB.bin')
 drive_names = ['d', 'e', 'f', 'g', 'h']
 drive_paths = [os.path.join(os.path.dirname(__file__), p, '') for p in drive_names]
+drive_root = os.path.dirname(__file__)
 
 
 def create_file(path, size=1048576):
@@ -72,3 +73,10 @@ def delete_temp_file():
 
 def create_temp_file():
     return create_file(path=temp_file_path)
+
+
+def delete_file_with_extensions(extensions=('md5')):
+    for root, dir, files in os.walk(drive_root):
+        for current_file in files:
+            if current_file.lower().endswith(extensions):
+                os.remove(os.path.join(root, current_file))

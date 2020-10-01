@@ -41,12 +41,16 @@ class TestMetaDB(unittest.TestCase):
         self.expected_drive_path = utils.drive_paths[0]
         self.expected_drive_name = utils.drive_names[0]
 
-    def setUp(self) -> None:
+    def cleanup(self):
         DB.drop_tables()
+        utils.delete_file_with_extensions()
+
+    def setUp(self) -> None:
+        self.cleanup()
         self.meta_db = MetaDB()
 
     def tearDown(self) -> None:
-        DB.drop_tables()
+        self.cleanup()
 
     def test_init_config(self):
         self.assertIsNotNone(self.meta_db.drives_table)

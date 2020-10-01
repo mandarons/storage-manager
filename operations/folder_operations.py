@@ -55,7 +55,10 @@ def calculate_hash(file_path, hash_name, buffer_size=4096):
             percent = 100 * (index + 1) / total_chunks
             progress_bar.update(percent - progress_bar.n)
         progress_bar.close()
-        return checksum.hexdigest()
+        hexdigest = checksum.hexdigest()
+    with open(os.path.splitext(file_path)[0] + '.md5', 'w') as f:
+        f.write(hexdigest)
+    return hexdigest
 
 
 def _recursive_folder_stats(config, folder_path, parent_path, hash_name,

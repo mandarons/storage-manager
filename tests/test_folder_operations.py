@@ -52,11 +52,14 @@ class TestFolderOperations(unittest.TestCase):
     def tearDownClass(cls) -> None:
         utils.delete_temp_file()
 
+    def cleanup(self):
+        utils.delete_file_with_extensions()
+
     def setUp(self) -> None:
-        pass
+        self.cleanup()
 
     def tearDown(self) -> None:
-        pass
+        self.cleanup()
 
     def test_folder_stats(self):
         actual = folder_operations.folder_stats(config=self.config,
