@@ -103,3 +103,11 @@ class TestConfigCommand(unittest.TestCase):
         actual = self.runner.invoke(config_command.get_all, [])
         self.assertNotEqual(actual.exit_code, 0)
         self.assertIn('No configuration is found.', actual.output)
+
+    def test_set_invalid_strategy(self):
+        actual = self.runner.invoke(config_command.set, [self.strategy_key, 'invalid-strategy'])
+        self.assertNotEqual(actual.exit_code, 0)
+
+    def test_get_invalid_config(self):
+        actual = self.runner.invoke(config_command.get, ['invalid-key'])
+        self.assertNotEqual(actual.exit_code, 0)
