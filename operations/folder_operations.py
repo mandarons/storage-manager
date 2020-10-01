@@ -36,14 +36,20 @@ from humanfriendly import format_size
 from tqdm import tqdm
 
 
-def calculate_hash(file_path, hash_name, buffer_size=4096):
+def generate_hash_file_path(file_path, hash_name):
+    return os.path.join(os.path.dirname(file_path), f'.{os.path.basename(os.path.splitext(file_path)[0])}.{hash_name}')
+
+
+def calculate_hash(file_path, hash_name, buffer_size=4096, force=True):
     """Calculate the hash of a file. The available hashes are given by the hashlib module.
     The available hashes can be listed with hashlib.algorithms_available."""
 
     hash_name = hash_name.lower()
+    hash_filename = generate_hash_file_path(file_path=file_path, hash_name=hash_name)
     if not hasattr(hashlib, hash_name):
         raise Exception('Hash algorithm not available : {}' .format(hash_name))
-
+    if os.path.exists(hash_filename) and not force:
+        return None
     with open(file_path, 'rb') as f:
         checksum = getattr(hashlib, hash_name)()
         total_size = os.path.getsize(filename=file_path)
@@ -56,12 +62,12 @@ def calculate_hash(file_path, hash_name, buffer_size=4096):
             progress_bar.update(percent - progress_bar.n)
         progress_bar.close()
         hexdigest = checksum.hexdigest()
-    with open(os.path.splitext(file_path)[0] + '.md5', 'w') as f:
+    with open(hash_filename, 'w') as f:
         f.write(hexdigest)
     return hexdigest
 
 
-def _recursive_folder_stats(config, folder_path, parent_path, hash_name,
+def _recursive_folder_stats(config, folder_path, parent_path, hash_name, hash_force=False,
                             ignore_hidden=False, depth=0, idx=1, parent_idx=0):
     items = {}
     folder_size, num_files = 0, 0
@@ -77,14 +83,14 @@ def _recursive_folder_stats(config, folder_path, parent_path, hash_name,
             idx += 1
 
             if os.path.isdir(file_path):
-                if config.verbose:
-                    print('FOLDER : {}'.format(file_path))
+                config.debug('FOLDER : {}'.format(file_path))
 
                 idx, items[file_path], _foldersize, _num_files = _recursive_folder_stats(
-                    config=config, folder_path=file_path, parent_path=folder_path, hash_name=hash_name,
+                    config=config, folder_path=file_path, parent_path=folder_path, hash_name=hash_name, hash_force=hash_force,
                     ignore_hidden=ignore_hidden, depth=depth + 1, idx=idx, parent_idx=current_idx)
                 folder_size += _foldersize
                 num_files += _num_files
+
             else:
                 filename, extension = os.path.splitext(f)
                 extension = extension[1:] if extension else None
@@ -102,9 +108,12 @@ def _recursive_folder_stats(config, folder_path, parent_path, hash_name,
                     'depth': depth,
                     'parent_index': current_idx,
                     'parent_path': folder_path,
-                    'uid': stats.st_uid,
-                    'hash': calculate_hash(file_path=file_path, hash_name=hash_name)
+                    'uid': stats.st_uid
                 }
+                hash = calculate_hash(file_path=file_path, hash_name=hash_name, force=hash_force)
+                if hash is not None:
+                    item['hash'] = hash
+
                 items[file_path] = item
                 num_files += 1
 
@@ -130,13 +139,15 @@ def _recursive_folder_stats(config, folder_path, parent_path, hash_name,
     return idx, items, folder_size, num_files
 
 
-def folder_stats(config, folder_path, hash_name='md5', ignore_hidden=False):
+def folder_stats(config, folder_path, hash_name='md5', ignore_hidden=False, hash_force=False):
     idx, items, folder_size, num_files = _recursive_folder_stats(
         config,
         folder_path,
         parent_path=os.path.dirname(folder_path),
         hash_name=hash_name,
-        ignore_hidden=ignore_hidden)
+        ignore_hidden=ignore_hidden,
+        hash_force=hash_force
+    )
     return items, folder_size, num_files
 
 
