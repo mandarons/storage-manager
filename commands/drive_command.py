@@ -61,10 +61,8 @@ def add(context, config, name, path):
     '''
     config.debug(f'Adding the drive {name} mounted at {path} ...')
 
-    result = config.meta_db.add_drive(name=name, path=os.path.join(os.path.abspath(path=path), ''))
-    if len(result) == 0:
-        config.error(f'Failed to add the drive {drive} with path {path}.')
-        sys.exit(1)
+    config.meta_db.add_drive(name=name, path=os.path.join(os.path.abspath(path=path), ''))
+
     context.invoke(refresh, name=name)
     config.debug(f'Drive {name} added to the storage.')
 

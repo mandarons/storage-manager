@@ -92,7 +92,7 @@ def get(config, key):
     '''
     config.debug(f'Getting the value of configuration key: {key} ...')
     result = config.meta_db.get_config(key=key)
-    if result is None:
+    if len(result) == 0:
         config.error(f'Key: {key} does not exist.')
         sys.exit(1)
     header = result.keys()
