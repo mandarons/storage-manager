@@ -144,3 +144,5 @@ dmypy.json
 cython_debug/
 
 /**/db.json
+/allure-report/
+/test-results/

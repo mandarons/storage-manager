@@ -41,15 +41,14 @@ class TestStatsDBSuccess(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestStatsDBSuccess, self).__init__(*args, **kwargs)
         self.expected_folder = os.path.dirname(__file__)
-        self.root_folder = os.path.dirname(self.expected_folder)
         self.mock_config = Config()
         items, folder_size, number_of_files = folder_operations.folder_stats(config=self.mock_config,
-                                                                             folder_path=self.root_folder)
-        self.root_stats = {
+                                                                             folder_path=self.expected_folder)
+        self.expected_stats = {
             'size': folder_size,
             'number_of_files': number_of_files,
             'name': 'root',
-            'path': self.root_folder,
+            'path': self.expected_folder,
             'items': items
         }
 
@@ -83,10 +82,10 @@ class TestStatsDBSuccess(unittest.TestCase):
         self.assertEqual(len(self.table.search(Query().path == self.expected_folder)), 0)
 
     def test_get_drive_stats(self):
-        self.table.insert({'path': self.root_folder, 'stats': self.root_stats})
+        self.table.insert({'path': self.expected_folder, 'stats': self.expected_stats})
         actual = self.stats_db.get_drive_stats(name='root')
         self.assertTrue(len(actual) > 0)
-        self.assertEqual(actual[0]['path'], self.root_folder)
+        self.assertEqual(actual[0]['path'], self.expected_folder)
 
     def test_get_non_existing_drive_stats(self):
         actual = self.stats_db.get_drive_stats(name='non-existing-drive')

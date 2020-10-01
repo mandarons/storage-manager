@@ -60,7 +60,7 @@ class TestFolderOperations(unittest.TestCase):
 
     def test_folder_stats(self):
         actual = folder_operations.folder_stats(config=self.config,
-                                                folder_path=os.path.dirname(os.path.dirname(__file__)))
+                                                folder_path=os.path.dirname(__file__))
         self.assertIsNotNone(actual)
         self.assertNotEqual(len(actual), 0)
         self.assertNotEqual(len(actual[0]), 0)
