@@ -36,6 +36,7 @@ import tests as utils
 from commands import Config
 from commands import drive_command, stats_command
 from db.stats_db import DB
+from operations import folder_operations
 
 
 class TestDriveCommand(unittest.TestCase):
@@ -133,7 +134,7 @@ class TestDriveCommand(unittest.TestCase):
         self.assertEqual(actual.exit_code, 0)
         temp_file_path = os.path.join(self.expected_drive_paths[0], 'temp.bin')
         utils.create_file(path=temp_file_path)
-        hash_file = os.path.splitext(temp_file_path)[0] + '.md5'
+        hash_file = folder_operations.generate_hash_file_path(file_path=temp_file_path, hash_name='md5')
         if os.path.exists(hash_file):
             os.remove(hash_file)
         actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
@@ -154,7 +155,7 @@ class TestDriveCommand(unittest.TestCase):
         self.assertEqual(actual.exit_code, 0)
         temp_file_path = os.path.join(self.expected_drive_paths[0], 'temp.bin')
         utils.create_file(path=temp_file_path)
-        hash_file = os.path.splitext(temp_file_path)[0] + '.md5'
+        hash_file = folder_operations.generate_hash_file_path(file_path=temp_file_path, hash_name='md5')
         if os.path.exists(hash_file):
             os.remove(hash_file)
         actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
