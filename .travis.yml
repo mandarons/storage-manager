@@ -5,7 +5,9 @@ python:
 #  - "3.7"
   - "3.8"
 before_install:
-  - sudo apt-get install -y allure
+  - sudo apt-add-repository ppa:qameta/allure
+  - sudo apt-get update
+  - sudo apt-get install allure
 install:
   - pip install -r requirements.txt
 script:
