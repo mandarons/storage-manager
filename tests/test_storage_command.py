@@ -81,8 +81,24 @@ class TestStorageCommand(unittest.TestCase):
         actual = self.runner.invoke(storage_command.info)
         self.assertEqual(actual.exit_code, 0)
 
-    def test_storage_refresh_error(self):
+    def test_storage_refresh(self):
+        for drive_name, drive_path in zip(self.expected_drive_names, self.expected_drive_paths):
+            actual = self.runner.invoke(drive_command.add, [drive_name, drive_path])
+            self.assertEqual(actual.exit_code, 0)
         actual = self.runner.invoke(storage_command.refresh)
+        self.assertEqual(actual.exit_code, 0)
+        self.assertNotIn('Usage', actual.output)
+
+    def test_storage_refresh_without_drives(self):
+        actual = self.runner.invoke(storage_command.refresh)
+        self.assertNotEqual(actual.exit_code, 0)
+        self.assertIn('No drives found', actual.output)
+
+    def test_storage_refresh_force(self):
+        for drive_name, drive_path in zip(self.expected_drive_names, self.expected_drive_paths):
+            actual = self.runner.invoke(drive_command.add, [drive_name, drive_path])
+            self.assertEqual(actual.exit_code, 0)
+        actual = self.runner.invoke(storage_command.refresh, ['--force'])
         self.assertEqual(actual.exit_code, 0)
         self.assertNotIn('Usage', actual.output)
 
