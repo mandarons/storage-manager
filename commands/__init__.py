@@ -43,14 +43,14 @@ class Config(object):
         self.verbose = False
         self.app_config = app_config.APP_CONFIG
 
-    def error(self, message):
-        return click.echo(click.style(message, fg='red'))
+    def error(self, message, **kwargs):
+        return click.echo(click.style(message, fg='red', **kwargs))
 
-    def warning(self, message):
-        return click.echo(click.style(message, fg='yellow'))
+    def warning(self, message, **kwargs):
+        return click.echo(click.style(message, fg='yellow', **kwargs))
 
-    def info(self, message):
-        return click.echo(click.style(message, fg='blue'))
+    def info(self, message, **kwargs):
+        return click.echo(click.style(message, fg='blue', **kwargs))
 
     def debug(self, message):
         return click.echo(message=message) if self.verbose else ''

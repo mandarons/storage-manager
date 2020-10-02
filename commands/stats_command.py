@@ -42,13 +42,7 @@ def stats(config):
     pass
 
 
-@stats.command(short_help='Shows summary of storage.')
-@pass_config
-def show_all(config):
-    '''
-    Summary of storage.
-    '''
-    config.debug('Showing summary of storage ...')
+def _show_all_stats(config):
     result = config.stats_db.get_all()
     if len(result) == 0:
         config.error('No stats exist.')
@@ -62,5 +56,14 @@ def show_all(config):
     headers = list(result[0]['stats'])
     headers.remove('items')
     config.info(tabulate(tabular_data=data, headers=headers))
+
+
+@stats.command(short_help='Shows summary of storage.')
+@pass_config
+def show_all(config):
+    '''
+    Summary of storage.
+    '''
+    config.debug('Showing summary of storage ...')
+    _show_all_stats(config=config)
     config.debug('Completed.')
-    return result

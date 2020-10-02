@@ -64,12 +64,15 @@ def info(config):
         total_storage += drive['stats']['total']
         used_storage += drive['stats']['used']
         free_storage += drive['stats']['free']
+    config.info(message='Summary of storage', bold=True)
     config.info(tabulate([
         ['db_path', db_path],
         ['total', humanfriendly.format_size(total_storage)],
         ['free', humanfriendly.format_size(free_storage)],
         ['used', humanfriendly.format_size(used_storage)]
     ]))
+    config.info(message='Stats of storage', bold=True)
+    stats_command._show_all_stats(config)
 
 
 @storage.command(short_help='Refresh metadata of the storage.')
