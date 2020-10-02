@@ -80,6 +80,8 @@ class TestStorageCommand(unittest.TestCase):
             self.assertEqual(actual.exit_code, 0)
         actual = self.runner.invoke(storage_command.info)
         self.assertEqual(actual.exit_code, 0)
+        self.assertIn('Summary of storage', actual.output)
+        self.assertIn('Stats of storage', actual.output)
 
     def test_storage_refresh(self):
         for drive_name, drive_path in zip(self.expected_drive_names, self.expected_drive_paths):
