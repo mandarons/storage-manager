@@ -91,12 +91,13 @@ def refresh(config, force):
 
 
 @storage.command(short_help='Insert a new file or folder into the storage.')
+@click.option('--delete-source', is_flag=True, default=False)
 @click.argument('storage_path', type=str, metavar='<storage_path>')
 @click.argument('source_path', type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True),
                 metavar='<source_path>')
 @pass_config
 @click.pass_context
-def insert(context, config, storage_path, source_path):
+def insert(context, config, storage_path, source_path, delete_source):
     '''
     Insert a new file or folder into the storage
 
@@ -113,9 +114,13 @@ def insert(context, config, storage_path, source_path):
     if not os.path.isdir(s=destination_path):
         os.mkdir(destination_path)
     config.debug(message=f'Copying the file {source_path} to {destination_path}')
-    result = folder_operations.cpsync(config=config, source=source_path, destination=destination_path, dry_run=False)
+    result = folder_operations.cpsync(config=config, source=source_path, destination=destination_path, dry_run=False,
+                                      delete_source=delete_source)
     if result:
-        config.info(message='Copied. Please delete the local copy.')
+        if delete_source:
+            config.info(message='Moved.')
+        else:
+            config.info(message='Copied. Please delete the local copy.')
         context.invoke(refresh, force=False)
     config.debug(f'File {source_path} copied to {destination_path}.')
 

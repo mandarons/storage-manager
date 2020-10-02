@@ -168,10 +168,11 @@ def get_transfer_size(source):
     return int(output)
 
 
-def cpsync(config, source, destination, dry_run=False):
+def cpsync(config, source, destination, dry_run=False, delete_source=False):
     cmd = ['rsync', '--progress', '--info=progress2', '-r',
            '--no-h', '--no-i-r', '--ignore-existing', '--stats']
     dry_run and cmd.append('--dry-run')
+    delete_source and cmd.append('--remove-source-files')
     total_size = get_transfer_size(source=source)
     cmd.append(source)
     cmd.append(destination)
