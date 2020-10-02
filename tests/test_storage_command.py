@@ -145,3 +145,20 @@ class TestStorageCommand(unittest.TestCase):
         self.assertIn('Copied', actual.output)
         self.assertIn(True, [os.path.exists(os.path.join(path, 'movies', os.path.basename(self.temp_file_path)))
                              for path in self.expected_drive_paths])
+
+    def test_storage_insert_with_delete_source(self):
+        for drive_name, drive_path in zip(self.expected_drive_names, self.expected_drive_paths):
+            actual = self.runner.invoke(drive_command.add, [drive_name, drive_path])
+            self.assertEqual(actual.exit_code, 0)
+        self.assertFalse(os.path.exists(
+            os.path.join(self.expected_drive_paths[0], 'movies', os.path.basename(self.temp_file_path))) or
+                         os.path.exists(os.path.join(self.expected_drive_paths[1], 'movies',
+                                                     os.path.basename(self.temp_file_path))))
+
+        actual = self.runner.invoke(storage_command.insert, ['--delete-source', 'movies', self.temp_file_path])
+        self.assertEqual(actual.exit_code, 0)
+        self.assertIn('Moved', actual.output)
+        self.assertIn(True, [os.path.exists(os.path.join(path, 'movies', os.path.basename(self.temp_file_path)))
+                             for path in self.expected_drive_paths])
+        self.assertFalse(os.path.exists(self.temp_file_path))
+        utils.create_temp_file()
