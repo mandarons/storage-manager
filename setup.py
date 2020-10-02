@@ -34,7 +34,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='storage-manager',
-    version='0.1.0',
+    version='0.3.0',
     author='Mandar Patil',
     author_email='mandarons@pm.me',
     description='Storage - a load-balanced storage manager',
@@ -50,10 +50,10 @@ setup(
     py_modules=['main'],
     install_requires=[
         'click==7.1.2',
-        'python-dotenv==0.14.0',
-        'tinydb==4.1.1',
         'humanfriendly==8.2',
+        'python-dotenv==0.14.0',
         'tabulate==0.8.7',
+        'tinydb==4.1.1',
         'tqdm==4.48.2'
     ],
     entry_points='''
