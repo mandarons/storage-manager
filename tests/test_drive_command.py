@@ -29,6 +29,7 @@
 
 import unittest
 import os
+import glob
 
 from click.testing import CliRunner
 
@@ -170,6 +171,23 @@ class TestDriveCommand(unittest.TestCase):
         self.assertEqual(old_hash_file_stats.st_mtime, hash_file_stats.st_mtime)
         actual = self.runner.invoke(stats_command.show_all, [])
         self.assertEqual(actual.exit_code, 0)
+
+    def test_refresh_drive_skip_hashing_of_md5(self):
+        actual = self.runner.invoke(drive_command.add, [self.expected_drive_names[0], self.expected_drive_paths[0]])
+        self.assertEqual(actual.exit_code, 0)
+        temp_file_path = os.path.join(self.expected_drive_paths[0], 'temp.bin')
+        utils.create_file(path=temp_file_path)
+        hash_file = folder_operations.generate_hash_file_path(file_path=temp_file_path, hash_name='md5')
+        if os.path.exists(hash_file):
+            os.remove(hash_file)
+        actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
+        self.assertEqual(actual.exit_code, 0)
+        self.assertTrue(os.path.exists(hash_file))
+        actual = self.runner.invoke(drive_command.refresh, [self.expected_drive_names[0]])
+        self.assertEqual(actual.exit_code, 0)
+        md5_pattern = os.path.join(self.expected_drive_paths[0], '.*.md5')
+        md5_files = glob.glob(md5_pattern)
+        self.assertEqual(len(md5_files), 1)
 
     def test_refresh_existing_drive_with_invalid_path(self):
         pass
