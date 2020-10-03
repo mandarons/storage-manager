@@ -3,7 +3,7 @@ humanfriendly==8.2
 python-dotenv==0.14.0
 tabulate==0.8.7
 tinydb==4.1.1
-tqdm==4.48.2
+tqdm==4.50.0
 twine==3.2.0
 wheel==0.35.1
 pytest==6.0.2
