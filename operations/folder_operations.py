@@ -94,28 +94,29 @@ def _recursive_folder_stats(config, folder_path, parent_path, hash_name, hash_fo
             else:
                 filename, extension = os.path.splitext(f)
                 extension = extension[1:] if extension else None
-                item = {
-                    'index': idx,
-                    'path': file_path,
-                    'filename': filename,
-                    'extension': extension,
-                    'size': stats.st_size,
-                    'last_accessed': stats.st_atime,
-                    'last_modified': stats.st_mtime,
-                    'last_metadata_changed': stats.st_ctime,
-                    'is_folder': False,
-                    'num_of_files': None,
-                    'depth': depth,
-                    'parent_index': current_idx,
-                    'parent_path': folder_path,
-                    'uid': stats.st_uid
-                }
-                hash = calculate_hash(file_path=file_path, hash_name=hash_name, force=hash_force)
-                if hash is not None:
-                    item['hash'] = hash
+                if extension != 'md5':
+                    item = {
+                        'index': idx,
+                        'path': file_path,
+                        'filename': filename,
+                        'extension': extension,
+                        'size': stats.st_size,
+                        'last_accessed': stats.st_atime,
+                        'last_modified': stats.st_mtime,
+                        'last_metadata_changed': stats.st_ctime,
+                        'is_folder': False,
+                        'num_of_files': None,
+                        'depth': depth,
+                        'parent_index': current_idx,
+                        'parent_path': folder_path,
+                        'uid': stats.st_uid
+                    }
+                    hash = calculate_hash(file_path=file_path, hash_name=hash_name, force=hash_force)
+                    if hash is not None:
+                        item['hash'] = hash
 
-                items[file_path] = item
-                num_files += 1
+                    items[file_path] = item
+                    num_files += 1
 
     stats = os.stat(folder_path)
     foldername = os.path.basename(folder_path)
