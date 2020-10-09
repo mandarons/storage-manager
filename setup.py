@@ -54,7 +54,7 @@ setup(
         'python-dotenv==0.14.0',
         'tabulate==0.8.7',
         'tinydb==4.2.0',
-        'tqdm==4.50.0'
+        'tqdm==4.50.2'
     ],
     entry_points='''
     [console_scripts]
