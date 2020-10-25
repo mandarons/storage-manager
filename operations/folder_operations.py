@@ -180,7 +180,7 @@ def cpsync(config, source, destination, dry_run=False, delete_source=False):
     config.info(f'Source: {source}\nDestination: {destination}')
     with subprocess.Popen(args=cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                           encoding='utf-8') as proc:
-        progress_bar = tqdm(total=100, desc='Copying', bar_format='{{desc}}|{{bar}}|{{postfix}}')
+        progress_bar = tqdm(total=100, desc='Copying', bar_format='{desc}|{bar}|{postfix}')
         while proc.poll() is None:
             output = proc.stdout.readline()
             m = re.findall(r'(\d+)\s+(\d+)%\s+([0-9]*.[0-9]+\w*/s)\s+', output)
