@@ -42,12 +42,14 @@ def calculate_storage_usage(config, path):
     return usage
 
 
-def determine_destination_drive(config, space_required):
+def determine_destination_drive(config, space_required, exclude_drives=None):
     algorithm = config.meta_db.get_config(key='strategy')
     algorithm = algorithm['value'] if 'value' in algorithm else ''
     drives = config.meta_db.get_drives()
     eligible_drives = []
     for drive in drives:
+        if exclude_drives and drive['name'] in exclude_drives:
+            continue
         usage = calculate_storage_usage(config=config, path=drive['path'])
         usage = usage[drive['path']]
         if space_required < usage['free']:
