@@ -51,7 +51,7 @@ setup(
     install_requires=[
         'click==7.1.2',
         'humanfriendly==8.2',
-        'python-dotenv==0.14.0',
+        'python-dotenv==0.15.0',
         'tabulate==0.8.7',
         'tinydb==4.2.0',
         'tqdm==4.51.0'
