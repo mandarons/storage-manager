@@ -184,4 +184,24 @@ class TestStorageCommand(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(destination_path, os.path.basename(self.temp_file_path))))
         self.assertTrue(os.path.exists(os.path.join(self.expected_drive_paths[1], 'movies',
                                                     os.path.basename(self.temp_file_path))))
+
+    def test_storage_move_with_copy_only(self):
+        utils.create_temp_file()
+        for drive_name, drive_path in zip(self.expected_drive_names[:2], self.expected_drive_paths[:2]):
+            actual = self.runner.invoke(drive_command.add, [drive_name, drive_path])
+            self.assertEqual(actual.exit_code, 0)
+        expected_path = os.path.join(self.expected_drive_paths[0], 'movies', os.path.basename(self.temp_file_path))
+        self.assertFalse(os.path.exists(expected_path))
+        destination_path = os.path.join(self.expected_drive_paths[0], 'movies', '')
+        actual = folder_operations.cpsync(config=self.config, source=self.temp_file_path, destination=destination_path)
+        self.assertTrue(actual)
+        self.assertFalse(os.path.exists(os.path.join(self.expected_drive_paths[1], 'movies',
+                                                     os.path.basename(self.temp_file_path))))
+        actual = self.runner.invoke(storage_command.move, ['--copy-only', 'movies',
+                                                           f'{self.expected_drive_names[0]}:/movies/'
+                                                           f'{os.path.basename(self.temp_file_path)}'])
+        self.assertEqual(actual.exit_code, 0)
+        self.assertTrue(os.path.exists(os.path.join(destination_path, os.path.basename(self.temp_file_path))))
+        self.assertTrue(os.path.exists(os.path.join(self.expected_drive_paths[1], 'movies',
+                                                    os.path.basename(self.temp_file_path))))
         utils.create_temp_file()
