@@ -36,6 +36,13 @@ from humanfriendly import format_size
 from tqdm import tqdm
 
 
+def join_paths(*args):
+    result = args[0]
+    for path in args[1:]:
+        result = os.path.join(result, path[1:] if path[0] == '/' else path)
+    return result
+
+
 def generate_hash_file_path(file_path, hash_name):
     return os.path.join(os.path.dirname(file_path), f'.{os.path.basename(os.path.splitext(file_path)[0])}.{hash_name}')
 

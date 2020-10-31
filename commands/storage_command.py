@@ -104,9 +104,9 @@ def insert(context, config, storage_path, source_path, delete_source):
     '''
     Insert a new file or folder into the storage
 
-    drive_name: Name of the drive of storage for data to be inserted into
-
-    path: Path of the data (file or folder) to be inserted into the storage
+    storage_path: Destination path within the storage e.g. movies/, music/ etc.
+    source_path: Source path of the data (file or folder) to be inserted into the storage
+    delete_source: Flag to indicate if source to be deleted or not (move operation)
     '''
     config.debug(f'Inserting {source_path} at {storage_path} ...')
     # algorithm:
@@ -126,6 +126,55 @@ def insert(context, config, storage_path, source_path, delete_source):
             config.info(message='Copied. Please delete the local copy.')
         context.invoke(refresh, force=False)
     config.debug(f'File {source_path} copied to {destination_path}.')
+
+
+@storage.command(short_help='Move files within the storage.')
+@click.option('--copy-only', is_flag=True, default=False)
+@click.argument('storage_path', type=str, metavar='<storage_path>')
+@click.argument('source_storage_path', type=str, metavar='<source_storage_path>')
+@pass_config
+@click.pass_context
+def move(context, config, storage_path, source_storage_path, copy_only):
+    '''
+    Move an existing file or folder within the storage
+
+    storage_path: Destination path within the storage e.g. movies/, music/ etc.
+    source_storage_path: Source storage path within the storage e.g. drive-1:/movies/movie-1, drive-2:/music/ etc.
+    copy_only: Flag to indicate if source should not be deleted (copy operation)
+    '''
+    config.debug(f'Moving {source_storage_path} to {storage_path} ...')
+    # algorithm:
+    # Check for the valid storage source path
+    source_tokens = source_storage_path.split(':')
+    if len(source_tokens) != 2:
+        config.error('Invalid source storage path. Correct format is <drive_name>:/<path_within_the_drive>.')
+        sys.exit(1)
+
+    # Resolve source storage path to absolute path
+    source_drive_path = config.meta_db.get_drive_path(name=source_tokens[0])
+    source_path = folder_operations.join_paths(source_drive_path, source_tokens[1])
+
+    # Get transfer size
+    transfer_size = folder_operations.get_transfer_size(source=source_path)
+
+    # Determine destination path, excluding the source drive
+    destination_drive = storage_operations.determine_destination_drive(config=config, space_required=transfer_size,
+                                                                       exclude_drives=[source_tokens[0]])
+    destination_path = os.path.join(destination_drive['path'], storage_path)
+
+    # Initiate cpsync
+    if not os.path.isdir(s=destination_path):
+        os.mkdir(destination_path)
+    config.debug(message=f'Copying the file {source_path} to {destination_path}')
+    result = folder_operations.cpsync(config=config, source=source_path, destination=destination_path, dry_run=False,
+                                      delete_source=not copy_only)
+    if result:
+        if not copy_only:
+            config.info(message='Moved.')
+        else:
+            config.info(message='Copied. Please delete the local copy.')
+    # Invoke refresh
+    context.invoke(refresh, force=False)
 
 
 storage.add_command(drive_command.drive)
