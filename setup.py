@@ -53,7 +53,7 @@ setup(
         'humanfriendly==8.2',
         'python-dotenv==0.15.0',
         'tabulate==0.8.7',
-        'tinydb==4.2.0',
+        'tinydb==4.3.0',
         'tqdm==4.51.0'
     ],
     entry_points='''
