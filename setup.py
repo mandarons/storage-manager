@@ -50,7 +50,7 @@ setup(
     py_modules=['main'],
     install_requires=[
         'click==7.1.2',
-        'humanfriendly==8.2',
+        'humanfriendly==9.1',
         'python-dotenv==0.15.0',
         'tabulate==0.8.7',
         'tinydb==4.3.0',
