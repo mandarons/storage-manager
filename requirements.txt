@@ -6,7 +6,7 @@ tinydb==4.3.0
 tqdm==4.56.0
 twine==3.2.0
 wheel==0.36.2
-pytest==6.1.2
+pytest==6.2.2
 flake8==3.8.4
 pytest-cov==2.10.1
 allure-pytest==2.8.19
