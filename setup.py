@@ -52,7 +52,7 @@ setup(
         'click==7.1.2',
         'humanfriendly==9.1',
         'python-dotenv==0.15.0',
-        'tabulate==0.8.7',
+        'tabulate==0.8.8',
         'tinydb==4.4.0',
         'tqdm==4.56.0'
     ],
